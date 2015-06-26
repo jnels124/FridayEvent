@@ -5,24 +5,24 @@
 
 (def version-number 0.1)
 
+(def args ["-c" "name" ["scope" "q" ] ["test" "s"] ])
+
 (def help
   ["-h" "--help" "Print this help"
-    :flag false])
+    :default true])
 
 (def cwd
   (System/getProperty "user.dir"))
 
 (def version
   ["-v" "--version" "Print Version"
-   :default false])
+   :default false])                                          ;; Print Help Banner by Default
 
 (def create
-  ["-c" "--create" "Create Controller"
-   :parse-fn #()])
-
+  ["-c" "--create" "Create Controller"])
 
 (defn write-file [name ext]
-  (writer (file (str cwd "/" name ext))))
+  (writer (file (str cwd "/" name "." ext))))
 
 (defn -main [& args]
 
@@ -30,9 +30,9 @@
         (cli args version help create)]
 
     (println opts)
-    (cond
-      (contains? opts :help) (print banner)
-      (contains? opts :version) (str "v" version-number))
-      (contains? opts :create) (write-file "foo" )))
 
+    (cond
+      (contains? opts :help) (print banner)                 ;; -h
+      (contains? opts :version) (str "v" version-number))   ;; -v
+      (contains? opts :create) (write-file "foo" "js")))    ;; -c
 
