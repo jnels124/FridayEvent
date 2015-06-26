@@ -1,38 +1,35 @@
 (ns f-it-up-friday.core
   (:require [clojure.tools.cli :refer [cli]]
-            [clojure.java.io :refer [writer reader file]])
+            [clojure.java.io :as io :refer [writer reader file]])
   (:gen-class))
 
 (def version-number 0.1)
 
-(def args ["-c" "name" ["scope" "q" ] ["test" "s"] ])
-
-(def help
-  ["-h" "--help" "Print this help"
-    :default true])
+;; TODO
+;; [x] - err handleling for when file is already present / check if file present
+;; [ ] -
 
 (def cwd
   (System/getProperty "user.dir"))
 
-(def version
-  ["-v" "--version" "Print Version"
-   :default false])                                         ;; Print Help Banner by Default
+(def extentions {:javascript "js"
+                 :ruby       "rb"
+                 :java       "java"})
 
-(def create
-  ["-c" "--create" "Create Controller"])
+(def cli-options
+  [["-h" "--help" "Print Help"]
+   ["-v" "--version" "Print Version"]])
 
-(defn write-file [name ext]
-  (writer (file (str cwd "/" name "." ext))))
+(defn write-file [name & [ext]]
+  (let [file-name (str cwd "/" name "." (or ext (:javascript extentions)))]
+    (if-not (.exists (io/as-file file-name))
+      (writer (io/file file-name))
+      "File Exists! Will not overwrite.")))
+
+(defn exit [code msg]
+  (println msg)
+  (System/exit code))
 
 (defn -main [& args]
-
-  (let [[opts args banner]
-        (cli args version help create)]
-
-    (println opts)
-
-    (cond
-      (contains? opts :help) (print banner)                 ;; -h
-      (contains? opts :version) (str "v" version-number))   ;; -v
-      (contains? opts :create) (write-file "foo" "js")))    ;; -c
-
+  (let [{:keys [options arguments errors summary]} (cli args cli-options)]
+    (cond (:help options) (exit 0 summary))))
