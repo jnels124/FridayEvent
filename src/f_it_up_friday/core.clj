@@ -12,21 +12,20 @@
 ;; [x] - err handleling for when file is already present / check if file present
 ;; [x] - handle --help, handle --version, --create separetely
 ;; [x] - handle missing arg
-;; [ ] - handle mutiple options flags
-;; [x] - fancy ascii art (must)
+;; [x] - handle mutiple options flags
+;; [x] - fancy ascii art (must have :)
+;; [ ] - make executable from target lein-bin
 
 (def ascii-art
   [
-   "         ___         ___         ___    ___   ___         ___         ___"
-   "  |     |     |  /        |     |       |  | |      \\ / |    \\  |  | \\"
-   "  |     |-+-  | +   |-+-  |      -+-    -+-  |-+-    +   |    || + |  +  "
-   "  |     |     |/    |     |         |    | | |       |   |    || \\|  |  "
-   "   ---   ---         ---   ---   ---    ---   ---    |    ---     \\   --"
+   "         ___         ___         ___    ___   ___         ___          ___"
+   "  |     |     |  /        |     |       |  | |      \\ /  |     \\   |   |  \\\\"
+   "  |     |-+-  | +   |-+-  |      -+-    -+-  |-+-    +   |   | | +   |   +   |"
+   "  |     |     |/    |     |         |    | | |       |   |   | | \\  |   |   |"
+   "   ---   ---         ---   ---   ---    ---   ---    |    ---      \\    --/"
    (str "---------------------------------------------------------------------*v" version-number)])
 
 (def framework "angular" #_(System/getenv "LBTC_FRAMEWORK"))
-
-(def default-template-type (System/getenv "LBTC_DEFAULT_TEMPLATE_TYPE"))
 
 (def required-opts #{:create_foo})
 
@@ -35,7 +34,7 @@
    ["-v" "--version" "Print Version" :flag true]])
 
 (def react-options
-  ["test"])
+  [["-c" "--create" :flag false]])
 
 (def angular-options
   [["-a" "-add-methods" "Expects comma sepearated string of method + args. i.e fctn1[arg1 arg2], fctn2[arg1]"]
@@ -54,37 +53,37 @@
 (defn missing-required? [opts]
   (not-every? required-opts opts))
 
-(defn exit [code msg]
-  (println msg)
-  (System/exit code))
+(defn print-version []
+  (println (str "v" version-number)))
 
-(defn choose-template-type [options arguments type]
-  (case type
-    "component" (react/component options arguments)))
+(defn print-help-banner [banner]
+  (doall
+    (println (->> ascii-art (string/join \newline)))
+    (println banner)))
 
-(defn choosen-framework [options arguments]
-  (let [default-template (or default-template-type "component")]
-    (println (str "will create REACT:" default-template "[default] see env vars"))
-    (case framework
-      "react" (choose-template-type options arguments default-template)
-      "angular" (do
-                  (when (:controller options)
-                    (angular/create-controller options))
-                  (when (:directive options)
-                    (angular/create-directive options))))))
 
 (defn -main [& args]
-  (println "SOMETHING SHOULD PRINT" (concat cli-options angular-options))
-  (let [[options arguments banner] (apply cli args (concat cli-options angular-options))]
-    (println options)
-    (cond
-      (:help options) (doall
-                        (println (->> ascii-art (string/join \newline)))
-                        (println)
-                        (println banner))
-      (:version options) (println (str "v" version-number))
-      :else (choosen-framework options arguments)
-      )))
-
-
-(-main "-c" "MyNewController,scope,q,backend" "-d" "myDirective,something,something,else" "-f" "something" "-m" "tester")
+  (case framework
+    "react" (let [[options arguments banner] (apply cli args (concat cli-options react-options))]
+              (println options)
+              (cond
+                (:help options) (print-help-banner banner)
+                (:version options)(print-version)
+                :else (do
+                        (when (:component options)
+                          (react/create-component options)
+                          (react/create-test options))
+                        (when (:test options)
+                          (angular/create-directive options)))
+                ))
+    "angular" (let [[options arguments banner] (apply cli args (concat cli-options angular-options))]
+                (println options)
+                (cond
+                  (:help options) (print-help-banner banner)
+                  (:version options) (print-version)
+                  :else (do
+                          (when (:controller options)
+                            (angular/create-controller options))
+                          (when (:directive options)
+                            (angular/create-directive options)))
+                  ))))

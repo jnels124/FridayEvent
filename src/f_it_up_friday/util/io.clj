@@ -11,3 +11,7 @@
   (let [file-name (str cwd "/" name "." (or ext (:javascript extentions)))]
     (if-not (.exists (io/as-file file-name))
       "File Exists! Won't overwrite.")))
+
+(defn exit [code msg]
+  (println msg)
+  (System/exit code))

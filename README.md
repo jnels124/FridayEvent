@@ -33,7 +33,6 @@ For react usage :
 
 - set enviorment variable : `$ export LBTC_FRAMEWORK=react`
 
-Default type of file : `$ export LBTC_DEFAULT_TEMPLATE_TYPE=component`
 
 ## License
 
