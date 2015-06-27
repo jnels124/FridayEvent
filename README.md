@@ -1,10 +1,29 @@
-# f-it-up-friday
+# LBTC : LEVELS BEYOND TEMPLATE CREATOR
+## brought to you by *f-it-up-friday*
 
-A Clojure library designed to ... well, that part is up to you.
+
+A tools.cli template generator for Angular and React.
+
+We are looking for feedback on our cli naming conventions.
+
+All feedback welcome through issues.
+
+Let us know how you would like to be able to use it.
+
+Thanks!
+
+@jnels @dviramontes
 
 ## Usage
 
-FIXME
+For angular usage :
+
+- set enviorment variable : `$ export LBTC_FRAMEWORK=angular`
+
+For react usage :
+
+- set enviorment variable : `$ export LBTC_FRAMEWORK=react`
+
 
 ## License
 
