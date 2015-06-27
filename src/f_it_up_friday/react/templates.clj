@@ -5,5 +5,7 @@
   (println "called react/component"))
 
 (defn create-test [options]
-  (println "called react/component"))
+  (println "called react/test"))
 
+(defn create-action [options]
+  (println "called react/action"))

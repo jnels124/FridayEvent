@@ -20,14 +20,19 @@
   [
    "         ___         ___         ___    ___   ___         ___          ___"
    "  |     |     |  /        |     |       |  | |      \\ /  |     \\   |   |  \\\\"
-   "  |     |-+-  | +   |-+-  |      -+-    -+-  |-+-    +   |   | | +   |   +   |"
-   "  |     |     |/    |     |         |    | | |       |   |   | | \\  |   |   |"
-   "   ---   ---         ---   ---   ---    ---   ---    |    ---      \\    --/"
-   (str "---------------------------------------------------------------------*v" version-number)])
+   "  |     |-+-  | +   |-+-  |      -+-    -+-  |-+-    +   |   | | + |   +   |"
+   "  |     |     |/    |     |         |    | | |       |   |   | | \\ |   |   |"
+   "   ---   ---         ---   ---   ---    ---   ---    |    ---     \\     --/"
+   " "
+   (str "TEMPLATE-FILE-CREATOR------------------------------------------------*v" version-number)
+   " "])
 
-(def framework "angular" #_(System/getenv "LBTC_FRAMEWORK"))
+(def framework
+  ;"react"
+  "angular"
+  #_(System/getenv "LBTC_FRAMEWORK"))
 
-(def required-opts #{:create_foo})
+(def required-opts #{:create})
 
 (def cli-options
   [["-h" "--help" "Print Help" :flag true :defaul false]
@@ -57,26 +62,26 @@
   (println (str "v" version-number)))
 
 (defn print-help-banner [banner]
-  (doall
+  (do
     (println (->> ascii-art (string/join \newline)))
     (println banner)))
 
 
 (defn -main [& args]
   (case framework
-    "react" (let [[options arguments banner] (apply cli args (concat cli-options react-options))]
+    "react" (let [[options _ banner] (apply cli args (concat cli-options react-options))]
               (println options)
               (cond
                 (:help options) (print-help-banner banner)
                 (:version options)(print-version)
                 :else (do
-                        (when (:component options)
+                        (when (:create options)
                           (react/create-component options)
                           (react/create-test options))
-                        (when (:test options)
-                          (angular/create-directive options)))
+                        (when (:action options)
+                          (react/create-action options)))
                 ))
-    "angular" (let [[options arguments banner] (apply cli args (concat cli-options angular-options))]
+    "angular" (let [[options _ banner] (apply cli args (concat cli-options angular-options))]
                 (println options)
                 (cond
                   (:help options) (print-help-banner banner)
