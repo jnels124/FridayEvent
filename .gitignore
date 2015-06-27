@@ -9,5 +9,8 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
-*.iml
+.idea
+.iml
+*.DS_Store
+/tmp*.iml
 /.idea
