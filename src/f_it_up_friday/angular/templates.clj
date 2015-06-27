@@ -1,35 +1,50 @@
-(ns f-it-up-friday.angular.templates)
+(ns f-it-up-friday.angular.templates
+  (:require [clojure.string]))
 
-(defn create-args
-  "Creates comma spearted list from sequable collection"
-  [args]
-  (apply str (interpose ", " args)))
+;;will move this to a utility location eventually
+(defn write-content
+  [path file-name content]
+  (spit
+    (str "./"
+         path
+         "/"
+         file-name)
+    content))
 
+;;TODO -> implement function builder
+(defn injection-string
+  [injections fctn-args]
+  (str (if (not (empty? injections))
+         (str ", [" injections ", function(" fctn-args ") {}]")
+         ", function () {}"
+         )
+       ");"))
+
+(defn module-string
+  [cl-opts, type]
+  (let [mod-opts (clojure.string/split (cl-opts (keyword type)) #",")]
+    (str "angular.module('"
+         (cl-opts :module-name)
+         "')."
+         type
+         "('"
+         (first mod-opts)
+         "'"
+         (injection-string (apply str (interpose ", " (map #(str "'" % "'") (rest mod-opts))))
+                           (apply str (interpose ", " (rest mod-opts)))))))
 (defn create-controller
-  [cl-opts add-args]
-  (let [injections (if (> (count add-args) 0)
-                     (create-args add-args))
-        path  (if (cl-opts :path)
-                (cl-opts :path)
-                "./")] ;; Will change to use working directory instead of project root which is ./
-    (spit
-      (str path
-           (cl-opts :file-name)
-           "-controller.js")
-      (str "angular.module('"
-           (cl-opts :module-name)
-           "').controller('"
-           (cl-opts :controller)
-           "'"
-           (str (if (not= nil injections)
-                  (str "' [" injections ", function(" injections ") {}]")
-                  ", function () {}"
-                  )
-                ");")))))
+  [cl-opts]
+  (write-content (cl-opts :path) (str (cl-opts :file-name) "-controller.js") (module-string cl-opts "controller")))
 
 (defn create-directive
-  [name injections]
-  (println "Creating directve")
-  (spit (str "./" name "-directive.js")
-        (str "angular.module('" name "').controller('" name "', [" injections ", function(" injections ") {
-        }]);")))
+  [cl-opts]
+  (let [dir-str (str
+                  "return {\n"
+                  "   restrict: 'E'\n"
+                  "   controller: '" (first (clojure.string/split (cl-opts :controller) #",")) "'\n"
+                  "   controllerAs: '" (cl-opts :bind-to-controller) "\n"
+                  "   templateUrl: '" (str (cl-opts :file-name) "-template.html'\n")
+                  "   scope: " (cl-opts :scope)
+                  "\n"
+                  "};")]
+    (write-content (cl-opts :path) (str (cl-opts :file-name) "-directive.js") (clojure.string/replace (module-string cl-opts "directive") "{}" (str "{\n   " dir-str "\n}")))))
