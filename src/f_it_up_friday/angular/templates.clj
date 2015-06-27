@@ -34,6 +34,7 @@
                            (apply str (interpose ", " (rest mod-opts)))))))
 (defn create-controller
   [cl-opts]
+  (println "Creating controller " cl-opts)
   (write-content (cl-opts :path) (str (cl-opts :file-name) "-controller.js") (module-string cl-opts "controller")))
 
 (defn create-directive

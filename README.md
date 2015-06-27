@@ -14,6 +14,15 @@ Thanks!
 
 @jnels @dviramontes
 
+## Framework Assumptions
+
+- **Angular v1.3**
+
+- **React v 1.3**
+    - **ES6 via babel**
+	- **JSX**
+	- **commonjs**
+
 ## Usage
 
 For angular usage :
@@ -24,6 +33,7 @@ For react usage :
 
 - set enviorment variable : `$ export LBTC_FRAMEWORK=react`
 
+Default type of file : `$ export LBTC_DEFAULT_TEMPLATE_TYPE=component`
 
 ## License
 
