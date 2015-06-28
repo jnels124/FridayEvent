@@ -8,6 +8,11 @@
 
 (def version-number 0.1)
 
+(def framework ;; defaults to angular
+  ;"react"
+  ;"angular"
+  (or (System/getenv "LBTC_FRAMEWORK") "angular"))
+
 ;; TODO
 ;; [x] - err handleling for when file is already present / check if file present
 ;; [x] - handle --help, handle --version, --create separetely
@@ -15,6 +20,7 @@
 ;; [x] - handle mutiple options flags
 ;; [x] - fancy ascii art (must have :)
 ;; [x] - make executable from target lein-bin
+;; [x] - exit when missing required
 ;; [ ] - write react files
 
 (def ascii-art
@@ -25,11 +31,8 @@
    "   ---   ---         ---   ---   ---    ---   ---    |    ---     \\     --/"
    " "
    (str "TEMPLATE-CREATOR----------------------------------------------------*v" version-number)
+   (str "SELECTED-FRAMEWORK -> " (string/upper-case framework))
    " "])
-
-(def framework ;; defaults to angular
-  ;"react" || "angular"
-  (or (System/getenv "LBTC_FRAMEWORK") "angular"))
 
 (def required-opts
   {:angular #{:create :file-name}
@@ -57,7 +60,7 @@
    ["-t" "--[no-]create-test" "Creates a test(s) if controller and/or directive is created" :flag true :default true]])
 
 (defn missing-required? [opts framework]
-  (not-every? ((keyword framework) required-opts) opts))
+  (not-any? ((keyword framework) required-opts) (set (keys opts))))
 
 (defn print-version []
   (println (str "v" version-number)))
@@ -80,13 +83,13 @@
                 (:help options) (print-help-banner banner)
                 (:version options) (print-version)
                 :else (do
+                        (when (missing-required? options framework)
+                          (exit 0 "Missing required arguments. See --help for switch options."))
                         (when (:create options)
                           (react/create-component options)
                           (react/create-test options))
                         (when (:action options)
-                          (react/create-action options))
-                        (when (missing-required? options framework)
-                          (println "Missing Required arguments for --create, missing file name")))))
+                          (react/create-action options)))))
 
     "angular" (let [[options _ banner] (apply cli args (concat cli-options angular-options))]
                 ;; (println options)
@@ -94,6 +97,8 @@
                   (:help options) (print-help-banner banner)
                   (:version options) (print-version)
                   :else (do
+                          (when (missing-required? options framework)
+                            (exit 0 "Missing required arguments. See --help for switch options."))
                           (when (:controller options)
                             (angular/create-controller options))
                           (when (:directive options)

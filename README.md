@@ -83,8 +83,12 @@ The framework will default to **angular** if none is set.
 ```:plugins [[lein-bin "0.3.4"]]```
 - `$ lein bin`
 - `$ ./target/lb -h`
+- `$ sudo chmod +x lb`
+- move exe to `~/bin` or wherever you keep your exes
 
-## License
+
+
+## Licenses
 
 Copyright © 2015 FIXME
 
