@@ -14,6 +14,15 @@ Thanks!
 
 @jnels @dviramontes
 
+## Framework Assumptions
+
+- **Angular v1.3**
+
+- **React v 1.3**
+    - **ES6 via babel**
+	- **JSX**
+	- **commonjs**
+
 ## Usage
 
 For angular usage :

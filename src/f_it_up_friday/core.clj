@@ -1,7 +1,9 @@
 (ns f-it-up-friday.core
   (:require [clojure.tools.cli :refer [cli]]
+            [clojure.string :as string]
             [clojure.java.io :as io :refer [writer]]
             [f-it-up-friday.angular.templates :as angular]
+            [f-it-up-friday.react.templates :as react]
             (:gen-class)))
 
 (def version-number 0.1)
@@ -10,61 +12,90 @@
 ;; [x] - err handleling for when file is already present / check if file present
 ;; [x] - handle --help, handle --version, --create separetely
 ;; [x] - handle missing arg
-;; [ ] - handle mutiple options flags
+;; [x] - handle mutiple options flags
+;; [x] - fancy ascii art (must have :)
+;; [ ] - make executable from target lein-bin
+;; [ ] - write react files
 
-(def cwd
-  (System/getProperty "user.dir"))
+(def ascii-art
+  [
+   "         ___         ___         ___    ___   ___         ___          ___"
+   "  |     |     |  /        |     |       |  | |      \\ /  |     \\   |   |  \\\\"
+   "  |     |-+-  | +   |-+-  |      -+-    -+-  |-+-    +   |   | | + |   +   |"
+   "  |     |     |/    |     |         |    | | |       |   |   | | \\ |   |   |"
+   "   ---   ---         ---   ---   ---    ---   ---    |    ---     \\     --/"
+   " "
+   (str "TEMPLATE-FILE-CREATOR------------------------------------------------*v" version-number)
+   " "])
 
-(def framework
-  (System/getenv "LBTC_FRAMEWORK"))
+(def framework                                              ;; TODO : switch back to sys env
+  ;"react"
+  "angular"
+  #_(System/getenv "LBTC_FRAMEWORK"))
 
-(def required-opts #{:create})
-
-(def extentions {:javascript "js"
-                 :ruby       "rb"
-                 :java       "java"})
+(def required-opts #{:create :file-name})
 
 (def cli-options
   [["-h" "--help" "Print Help" :flag true :defaul false]
-   ["-v" "--version" "Print Version" :flag true]
-   ["-c" "--create" "Create new file" :flag true]])
+   ["-v" "--version" "Print Version" :flag true]])
 
-(defn write-file [name & [ext]]
-  (let [file-name (str cwd "/" name "." (or ext (:javascript extentions)))]
-    (if-not (.exists (io/as-file file-name))
-      "File Exists! Won't overwrite.")))
+(def react-options
+  [["-c" "--create" :flag false]])
+
+(def angular-options
+  [["-a" "-add-methods" "Expects comma sepearated string of method + args. i.e fctn1[arg1 arg2], fctn2[arg1]"]
+   ["-b" "--[no-]bind-to-controller" "Binds all values passed to scope on the controller" :flag true :default false]
+   ["-c" "--controller" "Specifies controller with injections. i.e. controllername,inj1,inj2" :flag false]
+   ["-d" "--[no-]directive" "Specifies directive. If controller is specified to be created, this will be the directive controller" :flag false]
+   ["-h" "--[no-]include-html-template" "Creates a html template file."]
+   ["-l" "--[no-]link-fctn" "Flag to determine if link function is included for directive" :flag true :default true]
+   ["-m" "--module-name" ""]
+   ["-f" "--file-name" "Specifies the base name for files"]
+   ["-p" "--path" "Specify path string. If no path is provided, files will be placed in project root"]
+   ["-r" "--require" "Comma sepearted list of required directievs"]
+   ["-s" "--scope" "Comma separated list of scope var name and type. i.e var1:&,var2:=some,var3:@"]
+   ["-t" "--[no-]create-test" "Creates a test(s) if controller and/or directive is created" :flag true :default true]])
 
 (defn missing-required? [opts]
   (not-every? required-opts opts))
+
+(defn print-version []
+  (println (str "v" version-number)))
+
+(defn print-help-banner [banner]
+  (do
+    (println (->> ascii-art (string/join \newline)))
+    (println banner)))
 
 (defn exit [code msg]
   (println msg)
   (System/exit code))
 
-(defn choose-framework []
-  (println "will create")
-  (case framework
-    "react" (println "react component")
-    "angular" (println "angular controller")))
-
 (defn -main [& args]
-  (let [[opts add-args banner]
-        (cli args
-             ["-a" "-add-methods" "Expects comma sepearated string of method + args. i.e fctn1[arg1 arg2],fctn2[arg1]"]
-             ["-b" "--[no-]bind-to-controller" "Binds all values passed to scope on the controller" :flag false]
-             ["-c" "--controller" "Specifies controller with injections. i.e. controllername,inj1,inj2" :flag false]
-             ["-d" "--[no-]directive" "Specifies directive. If controller is specified to be created, this will be the directive controller" :flag false]
-             ["-h" "--[no-]include-html-template" "Creates a html template file."]
-             ["-l" "--[no-]link-fctn" "Flag to determine if link function is included for directive" :flag true :default false]
-             ["-m" "--module-name" ""]
-             ["-n" "--file-name" "Specifies the base name for files"]
-             ["-p" "--path" "Specify path string. If no path is provided, files will be placed in project root" :default "./"]
-             ["-r" "--require" "Comma sepearted list of required directives"]
-             ["-s" "--scope" "Comma separated list of scope var name and type. i.e var1:&,var2:=some,var3:@"]
-             ["-t" "--[no-]create-test" "Creates a test(s) if controller and/or directive is created" :flag true :default false])]
+  (case framework
+    "react" (let [[options _ banner] (apply cli args (concat cli-options react-options))]
+              (println options)
+              (cond
+                (:help options) (print-help-banner banner)
+                (:version options) (print-version)
+                :else (do
+                        (when (:create options)
+                          (react/create-component options)
+                          (react/create-test options))
+                        (when (:action options)
+                          (react/create-action options))
+                        (when (missing-required? options)
+                          (println "Missing Required arguments for --create")))))
 
-    (when (opts :controller) #_(and (:controller opts))
-      (angular/create-controller opts))
-
-    (when (:directive opts)
-      (angular/create-directive opts))))
+    "angular" (let [[options _ banner] (apply cli args (concat cli-options angular-options))]
+                (println options)
+                (cond
+                  (:help options) (print-help-banner banner)
+                  (:version options) (print-version)
+                  :else (do
+                          (when (:controller options)
+                            (angular/create-controller options))
+                          (when (:directive options)
+                            (angular/create-directive options))
+                          (when (missing-required? options)
+                            (println "Missing Required arguments for --create, missing file name")))))))

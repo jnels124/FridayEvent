@@ -1,5 +1,6 @@
 (ns f-it-up-friday.angular.templates
-  (:require [clojure.string]))
+  (:require [clojure.string]
+            [f-it-up-friday.util.io :as io]))
 
 (def level (atom 0))
 
@@ -41,6 +42,8 @@
   (write-content (cl-opts :path)
                  (str (cl-opts :file-name) "-controller.js")
                  (module-string cl-opts "controller")))
+  (println "Creating controller " cl-opts)
+  (io/write-content (cl-opts :path) (str (cl-opts :file-name) "-controller.js") (module-string cl-opts "controller")))
 
 (defn scope-entry
   [entry]
@@ -112,7 +115,6 @@
 ;; TODO: Implement args to control restrict
 (defn create-directive
   [cl-opts]
-  #_(swap! level + 1)
   (let [dir-str (str
                   (indent)
                   ((fn [] (swap! level + 1) nil))
@@ -126,9 +128,5 @@
                   (directive-scope-def (cl-opts :scope))
                   (directive-link-def (cl-opts :link-fctn))
                   "\n"
-                  "    };")]
-    (write-content (cl-opts :path)
-                   (str (cl-opts :file-name) "-directive.js")
-                   (clojure.string/replace (module-string cl-opts "directive")
-                                           "{}"
-                                           (str "{\n" dir-str "\n}")))))
+                  "};")]
+    (write-content (cl-opts :path) (str (cl-opts :file-name) "-directive.js") (clojure.string/replace (module-string cl-opts "directive") "{}" (str "{\n   " dir-str "\n}")))))

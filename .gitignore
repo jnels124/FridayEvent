@@ -12,5 +12,6 @@ pom.xml.asc
 .idea
 .iml
 *.DS_Store
-/tmp*.iml
+/tmp
+*.iml
 /.idea
