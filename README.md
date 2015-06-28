@@ -1,5 +1,5 @@
-# LBTC : LEVELS BEYOND TEMPLATE CREATOR
-## brought to you by *f-it-up-friday*
+## LBTC : LEVELS BEYOND TEMPLATE CREATOR
+### brought to you by *f-it-up-friday*
 
 
 A tools.cli template generator for Angular and React.
@@ -12,7 +12,7 @@ Let us know how you would like to be able to use it.
 
 Thanks!
 
-@jnels @dviramontes
+@jnels124 @dviramontes
 
 ## Framework Assumptions
 

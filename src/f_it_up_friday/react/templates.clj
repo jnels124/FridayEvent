@@ -2,6 +2,7 @@
   (:require [f-it-up-friday.util.io :as io]))
 
 (defn create-component [options]
+  (println options)
   (println "called react/component"))
 
 (defn create-test [options]

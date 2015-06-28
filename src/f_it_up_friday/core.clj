@@ -29,11 +29,13 @@
    " "])
 
 (def framework                                              ;; TODO : switch back to sys env
-  ;"react"
-  "angular"
+  "react"
+  ;"angular"
   #_(System/getenv "LBTC_FRAMEWORK"))
 
-(def required-opts #{:create :file-name})
+(def required-opts
+  {:angular #{:create :file-name}
+   :react #{:create}})
 
 (def cli-options
   [["-h" "--help" "Print Help" :flag true :defaul false]
@@ -56,8 +58,8 @@
    ["-s" "--scope" "Comma separated list of scope var name and type. i.e var1:&,var2:=some,var3:@"]
    ["-t" "--[no-]create-test" "Creates a test(s) if controller and/or directive is created" :flag true :default true]])
 
-(defn missing-required? [opts]
-  (not-every? required-opts opts))
+(defn missing-required? [opts framework]
+  (not-every? ((keyword framework) required-opts) opts))
 
 (defn print-version []
   (println (str "v" version-number)))
@@ -73,6 +75,7 @@
 
 (defn -main [& args]
   (case framework
+
     "react" (let [[options _ banner] (apply cli args (concat cli-options react-options))]
               (println options)
               (cond
@@ -84,11 +87,11 @@
                           (react/create-test options))
                         (when (:action options)
                           (react/create-action options))
-                        (when (missing-required? options)
-                          (println "Missing Required arguments for --create")))))
+                        (when (missing-required? options framework)
+                          (println "Missing Required arguments for --create, missing file name")))))
 
     "angular" (let [[options _ banner] (apply cli args (concat cli-options angular-options))]
-                (println options)
+                ;; (println options)
                 (cond
                   (:help options) (print-help-banner banner)
                   (:version options) (print-version)
@@ -97,5 +100,5 @@
                             (angular/create-controller options))
                           (when (:directive options)
                             (angular/create-directive options))
-                          (when (missing-required? options)
+                          (when (missing-required? options framework)
                             (println "Missing Required arguments for --create, missing file name")))))))
