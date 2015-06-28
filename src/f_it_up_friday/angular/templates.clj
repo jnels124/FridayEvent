@@ -95,7 +95,7 @@
   [required]
   (if (not (empty? required))
     (str (indent)
-         "required: ["
+         "require: ["
          (->> (clojure.string/split required #",")
               (map #(str "'" % "'"))
               (interpose ", ")
