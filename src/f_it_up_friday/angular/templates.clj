@@ -8,13 +8,6 @@
   []
   (apply str (repeat (deref level) "    ")))
 
-;;will move this to a utility location eventually
-(defn write-content
-  [path file-name content]
-  (spit
-    (str "./" path "/" file-name)
-    content))
-
 ;;TODO -> implement function builder
 (defn injection-string
   [injections fctn-args]
@@ -39,11 +32,9 @@
 
 (defn create-controller
   [cl-opts]
-  (write-content (cl-opts :path)
-                 (str (cl-opts :file-name) "-controller.js")
-                 (module-string cl-opts "controller")))
-  (println "Creating controller " cl-opts)
-  (io/write-content (cl-opts :path) (str (cl-opts :file-name) "-controller.js") (module-string cl-opts "controller")))
+  (io/write-content (cl-opts :path)
+                    (str (cl-opts :file-name) "-controller.js")
+                    (module-string cl-opts "controller")))
 
 (defn scope-entry
   [entry]
@@ -129,4 +120,6 @@
                   (directive-link-def (cl-opts :link-fctn))
                   "\n"
                   "};")]
-    (write-content (cl-opts :path) (str (cl-opts :file-name) "-directive.js") (clojure.string/replace (module-string cl-opts "directive") "{}" (str "{\n   " dir-str "\n}")))))
+    (io/write-content (cl-opts :path)
+                      (str (cl-opts :file-name) "-directive.js")
+                      (clojure.string/replace (module-string cl-opts "directive") "{}" (str "{\n   " dir-str "\n}")))))
