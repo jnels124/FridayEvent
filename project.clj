@@ -5,4 +5,9 @@
                       :url  "http://www.eclipse.org/legal/epl-v10.html"}
             :dependencies [[org.clojure/clojure "1.6.0"]
                            [org.clojure/tools.cli "0.2.4"]]
-            :main f-it-up-friday.core)
+            :main ^:skip-aot f-it-up-friday.core
+            :bin {:name "lbtc"
+                  :bin  "/usr/local/bin"}
+            :auto-clean false
+            :profiles {;; activated automatically during uberjar
+                       :uberjar {:aot :all}})
