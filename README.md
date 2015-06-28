@@ -1,4 +1,4 @@
-## LBTC : LEVELS BEYOND TEMPLATE CREATOR
+## LB : LEVELS BEYOND TEMPLATE CREATOR
 ### brought to you by *f-it-up-friday*
 
 -----
@@ -14,9 +14,9 @@ $ yo new react-fire-app
 ```
 now you can :
 
-`$ lbtc -c MainController,scope,q,backend -d myDirective,something, else -f davidController -m tester
+`$ lb -c MainController,scope,q,backend -d myDirective,something,else -f davidController -m tester
 `
-
+	
 
 
 which gives you a controller like this:
@@ -45,7 +45,7 @@ Run **--help** for all options and flags.
 
 ---
 
-We are looking for feedback on our cli naming conventions.
+We are looking for feedback on our cli switch name conventions.
 
 All feedback welcome through issues.
 
@@ -81,8 +81,8 @@ The framework will default to **angular** if none is set.
 ## Building EXE
 - add lein-bin to your lein profile 
 ```:plugins [[lein-bin "0.3.4"]]```
-- `$ lein bin`  -> ./target/lbtc
-- `$ ./target/lbtc -h`
+- `$ lein bin`
+- `$ ./target/lb -h`
 
 ## License
 

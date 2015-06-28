@@ -6,8 +6,6 @@
             :dependencies [[org.clojure/clojure "1.6.0"]
                            [org.clojure/tools.cli "0.2.4"]]
             :main ^:skip-aot f-it-up-friday.core
-            :bin {:name "lbtc"
-                  :bin  "/usr/local/bin"}
-            :auto-clean false
+            :bin {:name "lb"}
             :profiles {;; activated automatically during uberjar
                        :uberjar {:aot :all}})
