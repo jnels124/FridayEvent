@@ -44,7 +44,7 @@
 
 (def angular-options
   [["-a" "--add-methods" "Expects comma sepearated string of method + args. i.e fctn1[arg1 arg2], fctn2[arg1]"]
-   ["-b" "--[no-]bind-to-controller" "Binds all values passed to scope on the controller" :flag true :default false]
+   ["-b" "--[no-]bind-to-controller" "Binds all values passed to scope on the controller"]
    ["-c" "--controller" "Specifies controller with injections. i.e. controllername,inj1,inj2" :flag false]
    ["-d" "--[no-]directive" "Specifies directive. If controller is specified to be created, this will be the directive controller" :flag false]
    ["-h" "--[no-]include-html-template" "Creates a html template file."]
