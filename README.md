@@ -11,19 +11,24 @@ Think:
 $ rails new controller 
 or 
 $ yo new react-fire-app 
-
+```
 now you can :
 
-$ lbtc -c MainController,scope,q,backend -d myDirective,something, else -f davidController -m tester
+`$ lbtc -c MainController,scope,q,backend -d myDirective,something, else -f davidController -m tester
+`
+
+
 
 which gives you a controller like this:
----------------------------------------
+
+```
 angular.module('tester').controller('MainController', ['scope', 'q', 'backend', function (scope, q, backend) {}]);
 
-**
+```
 
 and a directive like this:
--------------------------
+
+```
 angular.module('tester').directive('myDirective', ['something', 'something', 'else', function (something, something, else) {
        return {
         restrict: 'E',
@@ -34,9 +39,7 @@ angular.module('tester').directive('myDirective', ['something', 'something', 'el
 }]);
 ```
 In files: 
-*MainController-controller.js*,
-
-*MainController-directive.js*.
+*MainController-controller.js*, *MainController-directive.js* respectively.
 
 Run **--help** for all options and flags.
 
@@ -64,11 +67,12 @@ For react usage :
 - set enviorment variable : `$ export LBTC_FRAMEWORK=react`
 
 The framework will default to **angular** if none is set.
+
 ## Framework Assumptions
 
 - **Angular v1.3**
 
-- **React v 1.3**
+- **React v1.3**
     - **ES6 via babel**
 	- **JSX**
 	- **commonjs**
