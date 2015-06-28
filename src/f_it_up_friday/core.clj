@@ -75,7 +75,7 @@
   (case framework
 
     "react" (let [[options _ banner] (apply cli args (concat cli-options react-options))]
-              (println options)
+              ;; (println options)
               (cond
                 (:help options) (print-help-banner banner)
                 (:version options) (print-version)
