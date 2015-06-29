@@ -21,7 +21,7 @@
 ;; [x] - fancy ascii art (must have :)
 ;; [x] - make executable from target lein-bin
 ;; [x] - exit when missing required
-;; [ ] - write react files
+;; [x] - write react files
 
 (def ascii-art
   ["         ___         ___         ___    ___   ___         ___          ___"
@@ -43,7 +43,7 @@
    ["-v" "--version" "Print Version" :flag true]])
 
 (def react-options
-  [["-c" "--create" :flag false]])
+  [["-c" "--create" "Creates React component and React component test files. Requires name, $ lb -c FooController" :flag false]])
 
 (def angular-options
   [["-a" "--add-methods" "Expects comma sepearated string of method + args. i.e fctn1[arg1 arg2], fctn2[arg1]" :flag false]
@@ -83,11 +83,9 @@
                 (:help options) (print-help-banner banner)
                 (:version options) (print-version)
                 :else (do
-                        (when (missing-required? options framework)
-                          (exit 0 "Missing required arguments. See --help for switch options."))
-                        (when (:create options)
+                        (if (:create options)
                           (react/create-component options)
-                          (react/create-test options))
+                          (exit 0 "Missing required arguments. See --help for switch options."))
                         (when (:action options)
                           (react/create-action options)))))
 

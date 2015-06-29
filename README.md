@@ -56,7 +56,7 @@ Thanks!
 @jnels124 @dviramontes
 
 
-## Usage
+## SETUP
 
 For angular usage :
 
