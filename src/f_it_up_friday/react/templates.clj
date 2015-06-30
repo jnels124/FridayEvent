@@ -47,7 +47,7 @@ describe('MySpec',  () => {
 (defn create-component [options]
   (println "Creating component and Test files...")
   (io/write-react-template (:create options) base-component :jsx)
-  (io/write-react-template (str (:create options) "_test") base-component :js))
+  (io/write-react-template (str (:create options) "_test") base-test :js))
 
 (defn create-test [options]
   (println "called react/test"))
